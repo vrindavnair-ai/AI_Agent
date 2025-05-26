@@ -1,0 +1,17 @@
+#python3 -m venv venv  -- to create virtual environment in mac os
+#source venv/bin/activate -- to activate the virtual environment
+
+from phi.agent import Agent
+from phi.model.groq import Groq
+from dotenv import load_dotenv #create an .env file to store APIs
+
+
+load_dotenv()
+
+
+
+
+# To test if the code is working uncomment the below code
+agent = Agent(model=Groq(id="llama-3.3-70b-versatile"))
+agent.print_response("write a poem on coconut tree")
+

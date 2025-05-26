@@ -1,0 +1,51 @@
+from phi.agent import Agent
+#from phi.model.openai import OpenAIChat
+#from phi.model.groq import Groq
+from phi.tools.duckduckgo import DuckDuckGo
+from dotenv import load_dotenv #create an .env file to store APIs
+from phi.model.groq import Groq
+from phi.tools.yfinance import YFinanceTools
+
+load_dotenv()
+
+web_agent = Agent(
+    name="Web Agent",
+    model=Groq(id="llama-3.3-70b-versatile"),
+    #model = OpenAIChat(id="gpt-3.5-turbo"),
+    #model = OpenAIChat(id="gpt-4o"),
+    tools=[DuckDuckGo()],
+    instructions=["Always include sources"],
+    show_tool_calls=True,
+    markdown=True
+    )
+
+finance_agent = Agent(
+              name = "Finance Agent",
+              role = "Get financial data",
+              model=Groq(id="llama-3.3-70b-versatile"),
+              #model = OpenAIChat(id="gpt-3.5-turbo"),
+              #model = OpenAIChat(id="gpt-4o"),
+              tools=[YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True)], #Agent uses tools to fetch latest information
+              #tools is an array because it can use multiple tools
+              show_tool_calls=True,
+              markdown=True,
+              instructions=["Use Tables to display data"]
+              #debug_mode=True, #optional to check step by step process
+              )
+
+#Team of agent
+agent_team = Agent(
+    team=[web_agent, finance_agent],  
+    model=Groq(id="llama-3.3-70b-versatile"),
+    instructions=["Always include sources", "Use Tables to display data"],
+    show_tool_calls=True,
+    markdown=True
+)
+"""agent_team = Agent(
+    #team=["web_agent","finance_agent"],
+    team=[Agent(name='web_agent'), Agent(name='finance_agent')],
+    instructions=["Always iclude sources","Use Tables to display data"],
+    show_tool_calls=True,
+    markdown=True)"""
+
+agent_team.print_response("Summarize and compare analyst recommendation and share the latest news for NVIDIA", stream=True)
