@@ -3,3 +3,5 @@ phidata
 dotenv
 groq
 yfinance
+openai
+duckduckgo_search
